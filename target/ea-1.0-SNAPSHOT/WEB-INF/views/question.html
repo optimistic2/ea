@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>NEUQ | EA</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/static/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="/static/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/static/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if viewsview the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        var basePath = "${basePath}";//给外部js文件传递路径参数
+    </script>
+    <!-- Google Font -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Data Tables
+                <small>advanced tables</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="#">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Data Table With Full Features</h3>
+                        </div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-lg-6" style="padding-left: 18px;">
+                                <div class="input-group" style="width: 100%;margin:0 auto;">
+                                    <input type="text" id="assets" class="form-control" placeholder="请输入关键字搜索">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="search_button"
+                                                onclick="doSearch();"><span
+                                                class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 2.4.0
+        </div>
+        <strong>Copyright &copy; CBY.</strong> All rights
+        reserved.
+    </footer>
+
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<!-- <script src="/static/bower_components/datatables.net/js/jquery.dataTables.min.js"></script> -->
+<script src="/static/bower_components/datatables.net/js/jquery.dataTables.js"></script>
+<script src="/static/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="/static/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/static/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/static/dist/js/demo.js"></script>
+<!-- page script -->
+<script>
+    $.dataTablesSettings = {
+        ordering: false,
+        autoWidth: false, //禁用自动调整列宽
+        stripeClasses: ["odd", "even"], //为奇偶行加上样式，兼容不支持CSS伪类的场合
+        processing: true, //隐藏加载提示,自行处理
+        serverSide: true, //启用服务器端分页
+        searching: false, //禁用原生搜索
+        orderMulti: false, //启用多列排序
+        order: [], //取消默认排序查询,否则复选框一列会出现小箭头
+        renderer: "bootstrap", //渲染样式：Bootstrap和jquery-ui
+        pagingType: "simple_numbers", //分页样式：simple,simple_numbers,full,full_numbers
+        columnDefs: [{
+            "targets": 'nosort', //列的样式名
+            "orderable": false //包含上样式名‘nosort'的禁止排序
+        }],
+        ajax: function (data, callback, settings) {
+            //封装请求参数
+            var param = {};
+
+            param.size = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
+            param.number = (data.start / data.length) + 1;//当前页码
+            param.keyWord = $("#assets").val();
+            //console.log(param);
+            //ajax请求数据
+            $.ajax({
+                type: "GET",
+                url: "question/page",
+                cache: false, //禁用缓存
+                data: param, //传入组装的参数
+                dataType: "json",
+                success: function (result) {
+                    //console.log(result);
+                    //setTimeout仅为测试延迟效果
+                    setTimeout(function () {
+                        //封装返回数据
+                        var returnData = {};
+                        returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                        if (result && result.code == 0 && result.data) {
+                            result = result.data
+                            returnData.recordsTotal = result.total;//返回数据全部记录
+                            returnData.recordsFiltered = result.total;//后台不实现过滤功能，每次查询均视作全部结果
+                            returnData.data = result.data;//返回的数据列表
+                        }else {
+                            returnData.recordsTotal = 0;
+                            returnData.recordsFiltered = 0;
+                            returnData.data = new Array();;
+                        }
+                        console.log(returnData);
+                        //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+                        //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                        callback(returnData);
+                    }, 200);
+                }
+            });
+        },
+        //列表表头字段
+        columns: [
+            {
+                title: "序号",
+                render: function (data, type, row, meta) {
+                    return meta.row + 1 + meta.settings._iDisplayStart
+                },
+                width: "4%"
+            },
+            {
+                title: "题目名称",
+                render: function (data, type, row) {
+                    return row.name ? '<a class="btn btn-xs btn-primary" target="modal" modal="lg" href="${ctx}/admin/role/view?id='+ row.id+ '">'+row.name+'</a> &nbsp;' : "";
+                },
+                width: "10%"
+            },
+            {
+                title: "题目内容",
+                render: function (data, type, row) {
+                    return row.content ? row.content : ""
+                },
+                width: "39%"
+            },
+            {
+                title: "题目类型",
+                data: "type",
+                width: "8%"
+            },
+            {
+                title: "所属试卷",
+                render: function (data, type, row) {
+                    return row.examinationPaperId ? row.examinationPaperId : ""
+                }
+                , width: "8%"
+            },
+            {
+                title: "说明",
+                render: function (data, type, row) {
+                    return row.desc ? row.desc : ""
+                },
+                width: "15%"
+            },
+            {
+                title: "分值",
+                render: function (data, type, row) {
+                    return row.score ? row.score : ""
+                },
+                width: "6%"
+            },
+            {
+                title: "操作",
+                render: function (data, type, row) {
+                    var str = "";
+                    if (row.mp_status == "1") {
+                        str = "<span class='label label-warning'>推送中</span>";
+                    } else if (row.mp_status == "2") {
+                        str = "<span class='label label-success'>推送完成</span>";
+                    } else {
+                        str = "<span class='label label-warning'>推送失败</span>";
+                    }
+                    return str;
+                },
+                width: "10%"
+            }
+        ],
+        language: {
+            "zeroRecords": "没有检索到数据",
+            "lengthMenu": "每页显示 _MENU_ 条记录",
+            "infoEmtpy": "没有数据",
+            "processing": "正在加载数据...",
+            "info": "第 _PAGE_ 页，共 _PAGES_ 页",
+            "infoEmpty": "当前数据为空",
+            paginate: {
+                next: "下一页",
+                previous: "上一页"
+            }
+        }
+    };
+    var dataTable
+    $(function () {
+        dataTable = $('#example1').DataTable($.dataTablesSettings);
+    });
+
+    function doSearch(params) {
+
+        var assetSearch = $("#assets").val();//获取搜索框的值
+        console.log(assetSearch);
+        dataTable.ajax.reload();
+//        $('#example1').DataTable($.dataTablesSettings);
+    }
+
+    //    function doSearch(params) {
+    //        console.log(params)
+    //        var assetSearch = $("#assets").val();//获取搜索框的值
+    //        console.log(assetSearch)
+    //        //这里重新设置参数
+    //        $.dataTablesSettings.fnServerParams = function (aoData) {
+    //            console.log(aoData)
+    //            aoData._rand = Math.random();
+    //            aoData.push({"name": "keyWorld", "value": assetSearch});
+    //
+    //        }
+    //        //搜索就是设置参数，然后销毁datatable重新再建一个
+    //        dataTable.destroy(false);
+    //        dataTable = $("#example1").dataTable($.dataTablesSettings);
+    //        //搜索后跳转到第一页
+    //        dataTable.fnPageChange(0);
+    //    }
+
+
+</script>
+</body>
+</html>
